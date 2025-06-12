@@ -5,10 +5,10 @@ import json
 import base64
 
 # 🔧 CONFIGURATION
-NAMESPACE = "your-namespace"
-REPO = "your-repo"
+NAMESPACE = "numpex-pc5/wp2-co-design"
+REPO = "g5k-testing"
 BRANCH = "main"
-FOLDER = "result"
+FOLDER = "results/proxy-geos-hc"
 GITLAB_ROOT = "gitlab.inria.fr"
 # URL-encode the project path
 PROJECT_PATH = f"{NAMESPACE}%2F{REPO}"
