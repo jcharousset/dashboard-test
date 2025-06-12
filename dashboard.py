@@ -39,14 +39,14 @@ def plot_history(df):
                       var_name="Time Type", value_name="Time (s)")
 
     chart = alt.Chart(df_long).mark_bar().encode(
-        x=alt.X('date:T', title='Date'),
+        x=alt.X('date:T', title='Date', axis=alt.Axis(format='%Y-%m-%d %H:%M:%S', labelAngle=0)),
         y=alt.Y('Time (s):Q', title='Time (seconds)'),
         color=alt.Color('Time Type:N', title='Time Type'),
         tooltip=['date:T', 'Time Type', 'Time (s)']
     ).properties(
         width=700,
         height=350,
-        title="Time History per Commit"
+        title="Performance History per Commit"
     )
 
     st.altair_chart(chart, use_container_width=True)
