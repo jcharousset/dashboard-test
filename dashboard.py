@@ -38,15 +38,26 @@ def plot_history(df):
     df_long = df.melt(id_vars=["date"], value_vars=["initial_time", "compute_time"],
                       var_name="Time Type", value_name="Time (s)")
 
-    chart = alt.Chart(df_long).mark_bar().encode(
-        x=alt.X('date:T', title='Date', axis=alt.Axis(format='%Y-%m-%d %H:%M:%S', labelAngle=0)),
+    base = alt.Chart(df_long).encode(
+        x=alt.X('date:T',
+                title='Date',
+                axis=alt.Axis(format='%Y-%m-%d %H:%M:%S', labelAngle=0)),
         y=alt.Y('Time (s):Q', title='Time (seconds)'),
         color=alt.Color('Time Type:N', title='Time Type'),
         tooltip=['date:T', 'Time Type', 'Time (s)']
-    ).properties(
+    )
+
+    bars = base.mark_bar()
+
+    # Regression lines for each 'Time Type'
+    trendlines = base.transform_regression(
+        'date', 'Time (s)', groupby=['Time Type'], method='linear'
+    ).mark_line(size=3)
+
+    chart = (bars + trendlines).properties(
         width=700,
         height=350,
-        title="Performance History per Commit"
+        title="Time History per Commit with Trend Lines"
     )
 
     st.altair_chart(chart, use_container_width=True)
