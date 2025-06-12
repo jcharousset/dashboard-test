@@ -52,12 +52,12 @@ def plot_history(df):
     # Regression lines for each 'Time Type'
     trendlines = base.transform_regression(
         'date', 'Time (s)', groupby=['Time Type'], method='linear'
-    ).mark_line(size=3)
+    ).mark_line(size=3, strokeDash=[5,5])
 
     chart = (bars + trendlines).properties(
         width=700,
         height=350,
-        title="Perfomance History per Commit with Trend Lines"
+        title="Perfomance History per Commit"
     )
 
     st.altair_chart(chart, use_container_width=True)
@@ -137,7 +137,7 @@ def parse_file_history(file):
 # Use the full page width layout (recommended at the top of your app)
 st.set_page_config(layout="wide")
 
-st.title("📊 Benchmark Results from GitLab")
+st.title("📊 NumPEx Exa-DI: Continuous Performance Benchmark on Grid5000")
 
 apps = list_subfolders()
 if not apps:
