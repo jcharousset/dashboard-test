@@ -55,6 +55,9 @@ def show_timing_chart(row):
 
     st.altair_chart(chart, use_container_width=True)
 
+def parse_file_history(file):
+    st.write(file)
+    
 # Use the full page width layout (recommended at the top of your app)
 st.set_page_config(layout="wide")
 
@@ -118,7 +121,8 @@ if data:
     
     if  selected is not None and not selected.empty:  # True if list is non-empty
         selected_row = selected.iloc[0]
-        show_timing_chart(selected_row)
+        parse_file_history (f"results/{selected_app}/{selected_row['config']}")
+        # show_timing_chart(selected_row)
     else:
         st.write("Select a row to see details.")
 else:
