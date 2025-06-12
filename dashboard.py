@@ -57,7 +57,7 @@ def plot_history(df):
     chart = (bars + trendlines).properties(
         width=700,
         height=350,
-        title="Time History per Commit with Trend Lines"
+        title="Perfomance History per Commit with Trend Lines"
     )
 
     st.altair_chart(chart, use_container_width=True)
