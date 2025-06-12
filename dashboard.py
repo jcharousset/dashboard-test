@@ -82,18 +82,14 @@ if data:
 
     # Display the grid
     grid_response = AgGrid(df, gridOptions=gridOptions, height=300, fit_columns_on_grid_load=True)
-
+    
     # Get selected rows
-    selected = grid_response['selected_rows']
+    selected = grid_response.get('selected_rows', [])
 
-    if not selected.empty:
-        selected_row = selected[0]  # since single selection
-        st.write(f"You selected: {selected_row['config']} ")
+    if selected:  # True if list is non-empty
+        row = selected[0]
+        st.write(f"You selected: {row}, {selected_row['config']}")
     else:
         st.write("Select a row to see details.")
-#    df = pd.DataFrame(data)
-#    cols = ["config"] + [c for c in df.columns if c != "config"]
-#    df = df[cols]
-#    st.dataframe(df)
 else:
     st.info("No valid JSON files loaded.")
