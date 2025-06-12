@@ -24,7 +24,23 @@ def list_subfolders(path="results"):
     # Filter folders only
     folders = [item["name"] for item in items if item["type"] == "tree"]
     return folders
-    
+
+def show_timing_bar_chart(row):
+    try:
+        initial_time = float(row["initial_time"])
+        compute_time = float(row["compute_time"])
+    except (ValueError, TypeError, KeyError):
+        st.error("Initial or compute time is missing or not a valid number.")
+        return
+
+    chart_data = pd.DataFrame({
+        "Time (s)": [initial_time, compute_time]
+    }, index=["Initial", "Compute"])
+
+    st.bar_chart(chart_data)
+    st.write(f"Initial time: {initial_time:.2f} s")
+    st.write(f"Compute time: {compute_time:.2f} s")
+
 # Use the full page width layout (recommended at the top of your app)
 st.set_page_config(layout="wide")
 
@@ -88,7 +104,7 @@ if data:
     
     if  selected is not None and not selected.empty:  # True if list is non-empty
         selected_row = selected.iloc[0]
-        st.write(f"You selected: {selected_row}, {selected_row['config']}")
+        show_timing_bar_chart(selected_row)
     else:
         st.write("Select a row to see details.")
 else:
