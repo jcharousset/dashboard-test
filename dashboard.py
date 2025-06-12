@@ -74,7 +74,25 @@ for filename in json_files:
 if data:
     df = pd.DataFrame(data)
     cols = ["config"] + [c for c in df.columns if c != "config"]
-    df = df[cols]
-    st.dataframe(df)
+    df = df[cols]    # Configure grid options to enable single row selection
+    gb = GridOptionsBuilder.from_dataframe(df)
+    gb.configure_selection(selection_mode="single", use_checkbox=True)
+    gridOptions = gb.build()
+
+    # Display the grid
+    grid_response = AgGrid(df, gridOptions=gridOptions, height=300, fit_columns_on_grid_load=True)
+
+    # Get selected rows
+    selected = grid_response['selected_rows']
+
+    if selected:
+        selected_row = selected[0]  # since single selection
+        st.write(f"You selected: {selected_row['Name']} from {selected_row['City']}, age {selected_row['Age']}")
+    else:
+        st.write("Select a row to see details.")
+#    df = pd.DataFrame(data)
+#    cols = ["config"] + [c for c in df.columns if c != "config"]
+#    df = df[cols]
+#    st.dataframe(df)
 else:
     st.info("No valid JSON files loaded.")
