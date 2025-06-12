@@ -95,7 +95,7 @@ def parse_file_history(file):
 
         # 2. Get raw JSON file content at this commit
         encoded_path = urllib.parse.quote(file, safe='')
-        file_url = f"{gitlab_url}/projects/{project_id}/repository/files/{encoded_path}/raw"
+        file_url = f"https://{GITLAB_ROOT}/api/v4/projects/{project_id}/repository/files/{encoded_path}/raw"
         file_params = {"ref": sha}
 
         file_resp = requests.get(file_url,  params=file_params)
