@@ -26,6 +26,30 @@ def list_subfolders(path="results"):
     folders = [item["name"] for item in items if item["type"] == "tree"]
     return folders
 
+def plot_history(df):
+    """
+    Plot a stacked bar chart showing initial_time and compute_time per commit date.
+
+    Args:
+        df (pd.DataFrame): DataFrame with columns ['date', 'initial_time', 'compute_time']
+    """
+    # Convert to long format for Altair stacking
+    df_long = df.melt(id_vars=["date"], value_vars=["initial_time", "compute_time"],
+                      var_name="Time Type", value_name="Time (s)")
+
+    chart = alt.Chart(df_long).mark_bar().encode(
+        x=alt.X('date:T', title='Date'),
+        y=alt.Y('Time (s):Q', title='Time (seconds)'),
+        color=alt.Color('Time Type:N', title='Time Type'),
+        tooltip=['date:T', 'Time Type', 'Time (s)']
+    ).properties(
+        width=700,
+        height=350,
+        title="Time History per Commit"
+    )
+
+    st.altair_chart(chart, use_container_width=True)
+
 def show_timing_chart(row):
     try:
         initial_time = float(row["initial_time"])
@@ -56,8 +80,48 @@ def show_timing_chart(row):
     st.altair_chart(chart, use_container_width=True)
 
 def parse_file_history(file):
-    st.write(file)
-    
+    # 1. Get commits touching the file
+    commits_url = f"https://{GITLAB_ROOT}/api/v4/projects/{PROJECT_ID}/repository/commits"
+    commits_params = {"path": file}
+    resp = requests.get(commits_url, headers=headers, params=commits_params)
+    resp.raise_for_status()
+    commits = resp.json()
+
+    data = []
+    for commit in commits:
+        sha = commit["id"]
+        commit_date = commit["committed_date"]
+
+        # 2. Get raw JSON file content at this commit
+        encoded_path = urllib.parse.quote(file_path, safe='')
+        file_url = f"{gitlab_url}/projects/{project_id}/repository/files/{encoded_path}/raw"
+        file_params = {"ref": sha}
+
+        file_resp = requests.get(file_url, headers=headers, params=file_params)
+
+        if file_resp.status_code == 200:
+            try:
+                json_data = file_resp.json()
+                initial_time = float(json_data.get("initial_time", 0))
+                compute_time = float(json_data.get("compute_time", 0))
+                data.append({
+                    "date": commit_date,
+                    "initial_time": initial_time,
+                    "compute_time": compute_time
+                })
+            except Exception as e:
+                # Could not parse JSON or fields; skip this commit
+                print(f"Skipping commit {sha} due to parse error: {e}")
+        else:
+            print(f"Skipping commit {sha} - file not found")
+
+    df = pd.DataFrame(data)
+    if not df.empty:
+        df["date"] = pd.to_datetime(df["date"])
+        # Sort by date ascending
+        df = df.sort_values("date")
+        plot_history(df)
+
 # Use the full page width layout (recommended at the top of your app)
 st.set_page_config(layout="wide")
 
