@@ -11,7 +11,6 @@ BRANCH = "main"
 FOLDER = "results/proxy-geos-hc"
 GITLAB_ROOT = "gitlab.inria.fr"
 # URL-encode the project path
-PROJECT_PATH = f"{NAMESPACE}%2F{REPO}"
 PROJECT_ID = "60556"
 
 # Step 1: List files in the folder using GitLab API
@@ -36,6 +35,9 @@ if not json_files:
     st.warning("No JSON files found in the folder.")
     st.stop()
 
+# Use the full page width layout (recommended at the top of your app)
+st.set_page_config(layout="wide")
+
 # Step 2: Download each JSON using raw URLs
 data = []
 for filename in json_files:
@@ -44,7 +46,7 @@ for filename in json_files:
         response = requests.get(raw_url)
         response.raise_for_status()
         content = json.loads(response.text)
-        content["filename"] = filename
+        content["config"] = filename
         data.append(content)
     except Exception as e:
         st.warning(f"Failed to load {filename}: {e}")
@@ -52,7 +54,7 @@ for filename in json_files:
 # Step 3: Display table
 if data:
     df = pd.DataFrame(data)
-    cols = ["filename"] + [c for c in df.columns if c != "filename"]
+    cols = ["config"] + [c for c in df.columns if c != "config"]
     df = df[cols]
     st.dataframe(df)
 else:
