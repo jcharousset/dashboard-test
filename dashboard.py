@@ -10,9 +10,20 @@ REPO = "g5k-testing"
 BRANCH = "main"
 FOLDER = "results/proxy-geos-hc"
 GITLAB_ROOT = "gitlab.inria.fr"
+
 # URL-encode the project path
 PROJECT_ID = "60556"
 
+def list_subfolders(path="results"):
+    url = f"https://{GITLAB_ROOT}/api/v4/projects/{PROJECT_ID}/repository/tree"
+    params = {"path": path, "per_page": 100}
+    r = requests.get(url, params=params)
+    r.raise_for_status()
+    items = r.json()
+    # Filter folders only
+    folders = [item["name"] for item in items if item["type"] == "tree"]
+    return folders
+    
 # Use the full page width layout (recommended at the top of your app)
 st.set_page_config(layout="wide")
 
@@ -25,6 +36,13 @@ params = {
 }
 
 st.title("📊 Benchmark Results from GitLab")
+
+apps = list_subfolders()
+if not apps:
+    st.error("No app folders found under 'results'")
+    st.stop()
+
+selected_app = st.selectbox("Select app", apps)
 
 file_list_resp = requests.get(tree_url, params=params)
 if file_list_resp.status_code != 200:
