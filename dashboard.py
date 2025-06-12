@@ -13,6 +13,9 @@ GITLAB_ROOT = "gitlab.inria.fr"
 # URL-encode the project path
 PROJECT_ID = "60556"
 
+# Use the full page width layout (recommended at the top of your app)
+st.set_page_config(layout="wide")
+
 # Step 1: List files in the folder using GitLab API
 tree_url = f"https://{GITLAB_ROOT}/api/v4/projects/{PROJECT_ID}/repository/tree"
 params = {
@@ -35,8 +38,7 @@ if not json_files:
     st.warning("No JSON files found in the folder.")
     st.stop()
 
-# Use the full page width layout (recommended at the top of your app)
-st.set_page_config(layout="wide")
+
 
 # Step 2: Download each JSON using raw URLs
 data = []
