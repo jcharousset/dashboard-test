@@ -38,7 +38,7 @@ selected_app = st.selectbox("Select an application: ", apps)
 # Step 1: List files in the folder using GitLab API
 tree_url = f"https://{GITLAB_ROOT}/api/v4/projects/{PROJECT_ID}/repository/tree"
 params = {
-    "path": f"results/{selected_app}"
+    "path": f"results/{selected_app}",
     "ref": BRANCH,
     "per_page": 100,
 }
