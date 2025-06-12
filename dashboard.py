@@ -86,7 +86,7 @@ if data:
     # Get selected rows
     selected = grid_response['selected_rows']
 
-    if selected:
+    if not selected.empty:
         selected_row = selected[0]  # since single selection
         st.write(f"You selected: {selected_row['config']} ")
     else:
