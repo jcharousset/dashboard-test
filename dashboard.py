@@ -5,6 +5,7 @@ import json
 import base64
 from st_aggrid import AgGrid, GridOptionsBuilder
 import altair as alt
+import urllib.parse
 
 # 🔧 CONFIGURATION
 NAMESPACE = "numpex-pc5/wp2-co-design"
