@@ -85,10 +85,9 @@ if data:
     
     # Get selected rows
     selected = grid_response.get('selected_rows', [])
-    st.write("Type:", type(selected))
-    st.write("Value:", selected)
-    if selected:  # True if list is non-empty
-        row = selected[0]
+    
+    if  selected is not None and not selected.empty:  # True if list is non-empty
+        row = selected.iloc[0]
         st.write(f"You selected: {row}, {selected_row['config']}")
     else:
         st.write("Select a row to see details.")
