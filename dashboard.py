@@ -3,6 +3,7 @@ import pandas as pd
 import requests
 import json
 import base64
+from st_aggrid import AgGrid, GridOptionsBuilder
 
 # 🔧 CONFIGURATION
 NAMESPACE = "numpex-pc5/wp2-co-design"
