@@ -4,6 +4,7 @@ import requests
 import json
 import base64
 from st_aggrid import AgGrid, GridOptionsBuilder
+import altair as alt
 
 # 🔧 CONFIGURATION
 NAMESPACE = "numpex-pc5/wp2-co-design"
@@ -25,21 +26,34 @@ def list_subfolders(path="results"):
     folders = [item["name"] for item in items if item["type"] == "tree"]
     return folders
 
-def show_timing_bar_chart(row):
+def show_stacked_timing_chart(row):
     try:
         initial_time = float(row["initial_time"])
         compute_time = float(row["compute_time"])
+        date = pd.to_datetime(row["date"])  # adjust field name if different
     except (ValueError, TypeError, KeyError):
-        st.error("Initial or compute time is missing or not a valid number.")
+        st.error("Missing or invalid data in row.")
         return
 
-    chart_data = pd.DataFrame({
-        "Time (s)": [initial_time, compute_time]
-    }, index=["Initial", "Compute"])
+    # Prepare data in "long" format for Altair
+    data = pd.DataFrame({
+        "Time Type": ["Initial", "Compute"],
+        "Time (s)": [initial_time, compute_time],
+        "Date": [date, date]
+    })
 
-    st.bar_chart(chart_data)
-    st.write(f"Initial time: {initial_time:.2f} s")
-    st.write(f"Compute time: {compute_time:.2f} s")
+    chart = alt.Chart(data).mark_bar().encode(
+        x=alt.X('Date:T', title='Date'),
+        y=alt.Y('Time (s):Q', title='Time (seconds)'),
+        color=alt.Color('Time Type:N', title='Type'),
+        tooltip=['Time Type', 'Time (s)']
+    ).properties(
+        width=600,
+        height=300,
+        title="Stacked Time Breakdown"
+    )
+
+    st.altair_chart(chart, use_container_width=True)
 
 # Use the full page width layout (recommended at the top of your app)
 st.set_page_config(layout="wide")
