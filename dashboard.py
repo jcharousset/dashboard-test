@@ -83,7 +83,7 @@ def parse_file_history(file):
     # 1. Get commits touching the file
     commits_url = f"https://{GITLAB_ROOT}/api/v4/projects/{PROJECT_ID}/repository/commits"
     commits_params = {"path": file}
-    resp = requests.get(commits_url, headers=headers, params=commits_params)
+    resp = requests.get(commits_url,  params=commits_params)
     resp.raise_for_status()
     commits = resp.json()
 
