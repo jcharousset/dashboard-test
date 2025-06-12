@@ -88,7 +88,7 @@ if data:
 
     if selected:
         selected_row = selected[0]  # since single selection
-        st.write(f"You selected: {selected_row['Name']} from {selected_row['City']}, age {selected_row['Age']}")
+        st.write(f"You selected: {selected_row['config']} ")
     else:
         st.write("Select a row to see details.")
 #    df = pd.DataFrame(data)
