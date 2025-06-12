@@ -27,14 +27,6 @@ def list_subfolders(path="results"):
 # Use the full page width layout (recommended at the top of your app)
 st.set_page_config(layout="wide")
 
-# Step 1: List files in the folder using GitLab API
-tree_url = f"https://{GITLAB_ROOT}/api/v4/projects/{PROJECT_ID}/repository/tree"
-params = {
-    "path": FOLDER,
-    "ref": BRANCH,
-    "per_page": 100,
-}
-
 st.title("📊 Benchmark Results from GitLab")
 
 apps = list_subfolders()
@@ -42,7 +34,14 @@ if not apps:
     st.error("No app folders found under 'results'")
     st.stop()
 
-selected_app = st.selectbox("Select app", apps)
+selected_app = st.selectbox("Select an application: ", apps)
+# Step 1: List files in the folder using GitLab API
+tree_url = f"https://{GITLAB_ROOT}/api/v4/projects/{PROJECT_ID}/repository/tree"
+params = {
+    "path": f"results/{selected_app}"
+    "ref": BRANCH,
+    "per_page": 100,
+}
 
 file_list_resp = requests.get(tree_url, params=params)
 if file_list_resp.status_code != 200:
