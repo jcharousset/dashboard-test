@@ -26,7 +26,7 @@ def list_subfolders(path="results"):
     folders = [item["name"] for item in items if item["type"] == "tree"]
     return folders
 
-def show_stacked_timing_chart(row):
+def show_timing_chart(row):
     try:
         initial_time = float(row["initial_time"])
         compute_time = float(row["compute_time"])
@@ -118,7 +118,7 @@ if data:
     
     if  selected is not None and not selected.empty:  # True if list is non-empty
         selected_row = selected.iloc[0]
-        show_timing_bar_chart(selected_row)
+        show_timing_chart(selected_row)
     else:
         st.write("Select a row to see details.")
 else:
